@@ -16,6 +16,8 @@ h2{font-size:1.1rem;margin:28px 0 8px}
 #banner{background:#fff3cd;color:#5c4400;border-radius:8px;padding:10px 12px;margin:12px 0;display:none}
 .cand{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin:10px 0}
 .top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.who{display:flex;align-items:center;gap:10px}
+.foto{width:56px;height:56px;border-radius:50%;object-fit:cover;border:3px solid}
 .nome{font-weight:650}
 .pct{font-size:1.9rem;font-weight:700}
 .bar{height:10px;border-radius:5px;background:var(--line);overflow:hidden;margin:8px 0 4px}
@@ -49,7 +51,7 @@ button:focus-visible{outline:3px solid var(--a);outline-offset:2px}
 <script>
 const $=id=>document.getElementById(id);
 const teste=new URLSearchParams(location.search).has("teste");
-const COR=["#c62828","#1565c0"];
+const COR=["#0f9d8a","#d98a00"];
 const fmt=n=>Math.round(n).toLocaleString("pt-BR");
 const fp=n=>n.toFixed(2).replace(".",",")+"%";
 let hist=[],sim=null,ultimo="";
@@ -80,12 +82,19 @@ function grafico(){
   $("chart").innerHTML=s;
 }
 
+// Escolhe a foto pelo nome vindo do TSE; se não houver foto, não mostra nada
+function foto(n,i){
+  const s=n.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+  const f=s.includes("lula")?"lula.jpg":(s.includes("bolsonaro")||s.includes("flavio"))?"flavio.jpg":"";
+  return f?'<img class="foto" src="'+f+'" alt="" style="border-color:'+COR[i]+'" onerror="this.remove()">':"";
+}
+
 function desenhar(d){
   const c=d.candidatos.slice(0,2);
   if(c.length<2){$("status").textContent="Dados do TSE em formato inesperado.";return}
   $("progbar").style.width=d.apurado+"%";
   $("status").textContent=fp(d.apurado)+" das seções apuradas · atualizado em "+d.atualizado;
-  $("cards").innerHTML=c.map((x,i)=>'<div class="cand"><div class="top"><span class="nome">'+x.nome+'</span><span class="pct" style="color:'+COR[i]+'">'+fp(x.pct)+'</span></div><div class="bar"><i style="width:'+x.pct+'%;background:'+COR[i]+'"></i></div><span class="mut">'+fmt(x.votos)+' votos</span></div>').join("");
+  $("cards").innerHTML=c.map((x,i)=>'<div class="cand"><div class="top"><span class="who">'+foto(x.nome,i)+'<span class="nome">'+x.nome+'</span></span><span class="pct" style="color:'+COR[i]+'">'+fp(x.pct)+'</span></div><div class="bar"><i style="width:'+x.pct+'%;background:'+COR[i]+'"></i></div><span class="mut">'+fmt(x.votos)+' votos</span></div>').join("");
   const p=modelo(c,d.apurado);
   $("prob").innerHTML=c.map((x,i)=>'<p style="margin:4px 0"><b style="color:'+COR[i]+'">'+(p[i]*100).toFixed(1).replace(".",",")+'%</b> '+x.nome+'</p>').join("");
   if(d.atualizado!==ultimo||teste){hist.push(p);ultimo=d.atualizado}
