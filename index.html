@@ -5,45 +5,68 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Apuração do 2º turno 2026 – Presidente</title>
 <style>
-:root{--bg:#f6f7f9;--card:#fff;--ink:#1b2430;--mut:#5d6877;--line:#d9dee5;--a:#0f9d8a;--b:#d98a00}
-@media (prefers-color-scheme:dark){:root{--bg:#12161c;--card:#1b222b;--ink:#eef1f5;--mut:#9aa6b5;--line:#2e3846}}
+:root{--bg:#eef1f5;--grad:linear-gradient(180deg,#e3f3e8,#eef1f5 460px);--card:#fff;--ink:#141b26;--mut:#5d6877;--line:#e1e6ed;--sh:0 1px 2px rgba(20,27,38,.06),0 8px 24px rgba(20,27,38,.06)}
+@media (prefers-color-scheme:dark){:root{--bg:#0e1218;--grad:linear-gradient(180deg,#12261b,#0e1218 460px);--card:#171d27;--ink:#eef1f5;--mut:#9aa6b5;--line:#283140;--sh:none}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
-main{max-width:720px;margin:0 auto;padding:20px 16px 40px}
-h1{font-size:1.5rem;line-height:1.2;margin:0 0 4px}
-h2{font-size:1.1rem;margin:28px 0 8px}
-.mut{color:var(--mut);font-size:.9rem}
-#banner{background:#fff3cd;color:#5c4400;border-radius:8px;padding:10px 12px;margin:12px 0;display:none}
-.cand{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin:10px 0}
-.top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
-.who{display:flex;align-items:center;gap:10px}
-.foto{width:56px;height:56px;border-radius:50%;object-fit:cover;border:3px solid}
-.nome{font-weight:650}
-.pct{font-size:1.9rem;font-weight:700}
-.bar{height:10px;border-radius:5px;background:var(--line);overflow:hidden;margin:8px 0 4px}
-.bar i{display:block;height:100%;transition:width .6s}
+body{margin:0;min-height:100vh;background:var(--grad) no-repeat,var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;font-variant-numeric:tabular-nums}
+.faixa{display:flex;height:6px}
+.faixa i{flex:1;background:#009c3b}
+.faixa i+i{background:#ffdf00}
+main{max-width:760px;margin:0 auto;padding:24px 16px 48px}
+h1{font-size:1.75rem;line-height:1.15;margin:8px 0 4px;letter-spacing:-.02em}
+h2{font-size:1.05rem;margin:0 0 12px}
+.mut{color:var(--mut);font-size:.9rem;margin:0}
+.live{display:inline-flex;align-items:center;gap:8px;font-size:.78rem;font-weight:700;letter-spacing:.06em;color:#c62828}
+.live i{width:9px;height:9px;border-radius:50%;background:currentColor;animation:p 1.4s infinite}
+@keyframes p{50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.live i{animation:none}}
+#banner{background:#fff3cd;color:#5c4400;border-radius:10px;padding:10px 12px;margin:12px 0;display:none}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin:12px 0;box-shadow:var(--sh)}
+.row{display:flex;justify-content:space-between;align-items:baseline}
 .prog{height:8px;border-radius:4px;background:var(--line);overflow:hidden;margin:8px 0}
-.prog i{display:block;height:100%;background:var(--ink);transition:width .6s}
-svg{width:100%;height:auto;background:var(--card);border:1px solid var(--line);border-radius:10px}
+.prog i{display:block;height:100%;width:0;background:var(--ink);transition:width .6s}
+.duel{display:flex;height:18px;border-radius:9px;overflow:hidden;gap:3px}
+.duel i{display:block;transition:width .6s}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:12px 0}
+.cand{background:var(--card);border:1px solid var(--line);border-top:5px solid;border-radius:16px;padding:16px;box-shadow:var(--sh)}
+.who{display:flex;align-items:center;gap:12px}
+.foto{width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid}
+.nome{font-weight:650;font-size:1.05rem;line-height:1.2}
+.pct{font-size:2.6rem;font-weight:750;letter-spacing:-.03em;line-height:1.1;margin-top:10px}
+.pb{display:flex;gap:12px;margin-bottom:12px}
+.pb>div{flex:1}
+.big{font-size:2rem;font-weight:750;letter-spacing:-.02em;line-height:1.2}
+svg{width:100%;height:auto;margin-top:14px;color:var(--mut)}
 button{font:inherit;padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
-button:focus-visible{outline:3px solid var(--a);outline-offset:2px}
+button:focus-visible{outline:3px solid #1565c0;outline-offset:2px}
 </style>
 </head>
 <body>
+<div class="faixa"><i></i><i></i></div>
 <main>
-<h1>Apuração do 2º turno 2026</h1>
-<p class="mut">Presidente da República · dados do TSE</p>
+<header>
+  <span class="live"><i></i><span id="livetxt">AO VIVO</span></span>
+  <h1>Apuração do 2º turno 2026</h1>
+  <p class="mut">Presidente da República · dados do TSE</p>
+</header>
 <div id="banner">Modo teste: os números abaixo são simulados e não são resultados reais.</div>
 
-<div class="prog"><i id="progbar" style="width:0"></i></div>
-<p id="status" class="mut">Carregando…</p>
+<section class="panel">
+  <div class="row"><span class="mut">Seções apuradas</span><b id="ap">0,00%</b></div>
+  <div class="prog"><i id="progbar"></i></div>
+  <p id="status" class="mut">Carregando…</p>
+</section>
 
-<div id="cards"></div>
+<section class="panel"><div class="duel" id="duel"></div></section>
+<div id="cards" class="grid"></div>
 
-<h2>Chance de vitória (estimativa)</h2>
-<div id="prob"></div>
-<svg id="chart" viewBox="0 0 600 220" role="img" aria-label="Evolução da chance de vitória"></svg>
-<p class="mut">Estimativa estatística própria, calculada a partir da margem atual e da fração já apurada. Não é dado do TSE e não substitui o resultado oficial.</p>
+<section class="panel">
+  <h2>Chance de vitória (estimativa)</h2>
+  <div class="pb" id="pb"></div>
+  <div class="duel" id="pduel"></div>
+  <svg id="chart" viewBox="0 0 600 220" role="img" aria-label="Evolução da chance de vitória"></svg>
+  <p class="mut" style="margin-top:12px">Estimativa estatística própria, calculada a partir da margem atual e da fração já apurada. Não é dado do TSE e não substitui o resultado oficial.</p>
+</section>
 
 <p><button id="teste"></button></p>
 <p class="mut">Projeto independente de aprendizado. Resultado oficial: divulgação de resultados do TSE.</p>
@@ -54,9 +77,9 @@ const teste=new URLSearchParams(location.search).has("teste");
 const COR=["#c62828","#1565c0"];
 const fmt=n=>Math.round(n).toLocaleString("pt-BR");
 const fp=n=>n.toFixed(2).replace(".",",")+"%";
+const pc=v=>(v*100).toFixed(1).replace(".",",")+"%";
 let hist=[],sim=null,ultimo="";
 
-// Função normal acumulada (aproximação)
 function cdf(z){const t=1/(1+0.2316419*Math.abs(z)),d=0.3989423*Math.exp(-z*z/2);
 const p=d*t*(0.3193815+t*(-0.3565638+t*(1.781478+t*(-1.821256+t*1.330274))));return z>0?1-p:p}
 
@@ -71,17 +94,6 @@ function simular(){
     candidatos:[{nome:"Candidato A (simulado)",pct:a,votos:v*a/100},{nome:"Candidato B (simulado)",pct:100-a,votos:v*(100-a)/100}]};
 }
 
-function grafico(){
-  let s='<line x1="40" x2="590" y1="110" y2="110" stroke="currentColor" opacity=".25" stroke-dasharray="4"/>';
-  s+='<text x="4" y="14" font-size="11" fill="currentColor" opacity=".6">100%</text><text x="10" y="114" font-size="11" fill="currentColor" opacity=".6">50%</text><text x="16" y="212" font-size="11" fill="currentColor" opacity=".6">0%</text>';
-  [0,1].forEach(k=>{
-    const n=Math.max(hist.length-1,1);
-    const pts=hist.map((h,i)=>(40+550*i/n).toFixed(1)+","+(205-190*h[k]).toFixed(1)).join(" ");
-    s+='<polyline fill="none" stroke="'+COR[k]+'" stroke-width="3" points="'+pts+'"/>';
-  });
-  $("chart").innerHTML=s;
-}
-
 // Escolhe a foto pelo nome vindo do TSE; se não houver foto, não mostra nada
 function foto(n,i){
   const s=n.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
@@ -89,14 +101,32 @@ function foto(n,i){
   return f?'<img class="foto" src="'+f+'" alt="" style="border-color:'+COR[i]+'" onerror="this.remove()">':"";
 }
 
+function grafico(){
+  let s="";
+  [0,25,50,75,100].forEach(v=>{const y=205-190*v/100;
+    s+='<line x1="40" x2="590" y1="'+y+'" y2="'+y+'" stroke="currentColor" opacity="'+(v==50?.4:.15)+'"'+(v==50?' stroke-dasharray="4"':"")+'/><text x="34" y="'+(y+4)+'" font-size="11" text-anchor="end" fill="currentColor">'+v+'%</text>'});
+  const n=Math.max(hist.length-1,1);
+  [0,1].forEach(k=>{
+    const xy=hist.map((h,i)=>[40+550*i/n,205-190*h[k]]);
+    const pts=xy.map(q=>q[0].toFixed(1)+","+q[1].toFixed(1)).join(" "),l=xy[xy.length-1];
+    s+='<polygon fill="'+COR[k]+'" opacity=".12" points="'+pts+' '+l[0].toFixed(1)+',205 40,205"/>';
+    s+='<polyline fill="none" stroke="'+COR[k]+'" stroke-width="3" stroke-linejoin="round" points="'+pts+'"/>';
+    s+='<circle cx="'+l[0].toFixed(1)+'" cy="'+l[1].toFixed(1)+'" r="5" fill="'+COR[k]+'"/>';
+  });
+  $("chart").innerHTML=s;
+}
+
 function desenhar(d){
   const c=d.candidatos.slice(0,2);
   if(c.length<2){$("status").textContent="Dados do TSE em formato inesperado.";return}
+  const t=(c[0].pct+c[1].pct)||100,p=modelo(c,d.apurado);
   $("progbar").style.width=d.apurado+"%";
-  $("status").textContent=fp(d.apurado)+" das seções apuradas · atualizado em "+d.atualizado;
-  $("cards").innerHTML=c.map((x,i)=>'<div class="cand"><div class="top"><span class="who">'+foto(x.nome,i)+'<span class="nome">'+x.nome+'</span></span><span class="pct" style="color:'+COR[i]+'">'+fp(x.pct)+'</span></div><div class="bar"><i style="width:'+x.pct+'%;background:'+COR[i]+'"></i></div><span class="mut">'+fmt(x.votos)+' votos</span></div>').join("");
-  const p=modelo(c,d.apurado);
-  $("prob").innerHTML=c.map((x,i)=>'<p style="margin:4px 0"><b style="color:'+COR[i]+'">'+(p[i]*100).toFixed(1).replace(".",",")+'%</b> '+x.nome+'</p>').join("");
+  $("ap").textContent=fp(d.apurado);
+  $("status").textContent="Atualizado em "+d.atualizado;
+  $("duel").innerHTML='<i style="width:'+(c[0].pct/t*100)+'%;background:'+COR[0]+'"></i><i style="flex:1;background:'+COR[1]+'"></i>';
+  $("cards").innerHTML=c.map((x,i)=>'<div class="cand" style="border-top-color:'+COR[i]+'"><div class="who">'+foto(x.nome,i)+'<span class="nome">'+x.nome+'</span></div><div class="pct" style="color:'+COR[i]+'">'+fp(x.pct)+'</div><span class="mut">'+fmt(x.votos)+' votos</span></div>').join("");
+  $("pb").innerHTML=c.map((x,i)=>'<div><div class="big" style="color:'+COR[i]+'">'+pc(p[i])+'</div><div class="mut">'+x.nome+'</div></div>').join("");
+  $("pduel").innerHTML='<i style="width:'+(p[0]*100)+'%;background:'+COR[0]+'"></i><i style="flex:1;background:'+COR[1]+'"></i>';
   if(d.atualizado!==ultimo||teste){hist.push(p);ultimo=d.atualizado}
   grafico();
 }
@@ -111,6 +141,7 @@ async function carregar(){
 }
 
 $("banner").style.display=teste?"block":"none";
+$("livetxt").textContent=teste?"TESTE":"AO VIVO";
 $("teste").textContent=teste?"Sair do modo teste":"Ver modo teste";
 $("teste").onclick=()=>{location.search=teste?"":"?teste"};
 carregar();
