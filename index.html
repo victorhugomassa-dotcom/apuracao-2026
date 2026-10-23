@@ -4,6 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Apuração do 2º turno 2026 – Presidente</title>
+<meta name="description" content="Acompanhe em tempo real a apuração do 2º turno das eleições 2026 para Presidente, com dados do TSE.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:title" content="Apuração do 2º turno 2026 – Presidente">
+<meta property="og:description" content="Acompanhe em tempo real os votos apurados e a estimativa de chance de vitória. Dados: TSE.">
+<meta property="og:image" content="https://apuracao-2026.vercel.app/og.png.">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <style>
 :root{--bg:#eef1f5;--grad:linear-gradient(180deg,#e3f3e8,#eef1f5 460px);--card:#fff;--ink:#141b26;--mut:#5d6877;--line:#e1e6ed;--sh:0 1px 2px rgba(20,27,38,.06),0 8px 24px rgba(20,27,38,.06)}
 @media (prefers-color-scheme:dark){:root{--bg:#0e1218;--grad:linear-gradient(180deg,#12261b,#0e1218 460px);--card:#171d27;--ink:#eef1f5;--mut:#9aa6b5;--line:#283140;--sh:none}}
@@ -78,7 +87,7 @@ const COR=["#c62828","#1565c0"];
 const fmt=n=>Math.round(n).toLocaleString("pt-BR");
 const fp=n=>n.toFixed(2).replace(".",",")+"%";
 const pc=v=>(v*100).toFixed(1).replace(".",",")+"%";
-let hist=[],sim=null,ultimo="";
+let hist=[],sim=null,ultimo="",lastOk=0,txtOk="";
 
 function cdf(z){const t=1/(1+0.2316419*Math.abs(z)),d=0.3989423*Math.exp(-z*z/2);
 const p=d*t*(0.3193815+t*(-0.3565638+t*(1.781478+t*(-1.821256+t*1.330274))));return z>0?1-p:p}
@@ -119,6 +128,8 @@ function grafico(){
 function desenhar(d){
   const c=d.candidatos.slice(0,2);
   if(c.length<2){$("status").textContent="Dados do TSE em formato inesperado.";return}
+  lastOk=Date.now();txtOk=d.atualizado;
+  $("livetxt").textContent=teste?"TESTE":"AO VIVO";
   const t=(c[0].pct+c[1].pct)||100,p=modelo(c,d.apurado);
   $("progbar").style.width=d.apurado+"%";
   $("ap").textContent=fp(d.apurado);
@@ -137,7 +148,13 @@ async function carregar(){
     if(teste)d=simular();
     else{const r=await fetch("/api/tse");if(!r.ok)throw 0;d=await r.json()}
     desenhar(d);
-  }catch(e){$("status").textContent="Aguardando dados do TSE… nova tentativa em instantes."}
+  }catch(e){
+    if(lastOk){
+      const m=Math.floor((Date.now()-lastOk)/60000);
+      $("status").textContent="Sem conexão com o TSE há "+(m<1?"menos de 1":m)+" min. Mostrando os últimos dados ("+txtOk+").";
+      $("livetxt").textContent="RECONECTANDO";
+    }else $("status").textContent="Aguardando dados do TSE… nova tentativa em instantes.";
+  }
 }
 
 $("banner").style.display=teste?"block":"none";
