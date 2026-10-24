@@ -18,7 +18,7 @@ export default async function handler(req, res) {
     for (const cg of d.carg || [])
       for (const a of cg.agr || [])
         for (const p of a.par || [])
-          for (const c of p.cand || []) cands.push(c);
+          for (const c of p.cand || []) cands.push({ ...c, sg: p.sg });
     cands.sort((a, b) => int(a.seq) - int(b.seq));
     res.status(200).json({
       apurado: dec(d.s && d.s.pst) || 0,          // % de seções totalizadas
@@ -28,6 +28,8 @@ export default async function handler(req, res) {
         nome: c.nmu || c.nm,
         votos: int(c.vap),
         pct: dec(c.pvap) || 0,
+        partido: c.sg || "",                  // sigla do partido
+        numero: c.n || "",                    // número do candidato
         eleito: c.e === "s" || /^eleito/i.test(c.st || ""),
       })),
     });
