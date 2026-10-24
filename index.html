@@ -42,6 +42,8 @@ h2{font-size:1.05rem;margin:0 0 12px}
 .duel i{display:block;transition:width .6s}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:12px 0}
 .cand{background:var(--card);border:1px solid var(--line);border-top:5px solid;border-radius:16px;padding:16px;box-shadow:var(--sh)}
+.cand{position:relative}
+.selo{position:absolute;bottom:16px;right:14px;background:#009c3b;color:#fff;border-radius:999px;padding:4px 12px 4px 8px;display:flex;align-items:center;gap:4px;font-size:12px;font-weight:500;letter-spacing:.05em}
 .who{display:flex;align-items:center;gap:12px}
 .foto{width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid}
 .nome{font-weight:650;font-size:1.05rem;line-height:1.2}
@@ -73,7 +75,7 @@ button:focus-visible{outline:3px solid #1565c0;outline-offset:2px}
 <section class="panel"><div class="duel" id="duel"></div></section>
 <div id="cards" class="grid"></div>
 
-<section class="panel">
+<section class="panel" id="probpanel">
   <h2>Chance de vitória (estimativa)</h2>
   <div class="pb" id="pb"></div>
   <div class="duel" id="pduel"></div>
@@ -104,7 +106,8 @@ function simular(){
   sim.f=Math.min(100,sim.f+1.5);
   const a=sim.fin+sim.b*(1-sim.f/100)+(Math.random()-.5)*.2,v=1.2e8*sim.f/100;
   return{apurado:sim.f,atualizado:new Date().toLocaleTimeString("pt-BR"),
-    candidatos:[{nome:"Candidato A (simulado)",pct:a,votos:v*a/100},{nome:"Candidato B (simulado)",pct:100-a,votos:v*(100-a)/100}]};
+    finalizado:sim.f>=100,
+    candidatos:[{nome:"Candidato A (simulado)",pct:a,votos:v*a/100,eleito:sim.f>=100&&a>50},{nome:"Candidato B (simulado)",pct:100-a,votos:v*(100-a)/100,eleito:sim.f>=100&&a<=50}]};
 }
 
 // Escolhe a foto pelo nome vindo do TSE; se não houver foto, não mostra nada
@@ -113,6 +116,9 @@ function foto(n,i){
   const f=s.includes("lula")?"lula.jpg":(s.includes("bolsonaro")||s.includes("flavio"))?"flavio.jpg":"";
   return f?'<img class="foto" src="'+f+'" alt="" style="border-color:'+COR[i]+'" onerror="this.remove()">':"";
 }
+
+function selo(x){return x.eleito?'<div class="selo"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5.5 12.5l4.2 4.2 8.8-9.4" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>ELEITO</div>':""}
+const ehLula=n=>/lula/i.test(n.normalize("NFD").replace(/[\u0300-\u036f]/g,""));
 
 function grafico(){
   let s="";
@@ -131,15 +137,17 @@ function grafico(){
 
 function desenhar(d){
   const c=d.candidatos.slice(0,2);
+  if(c.length==2&&ehLula(c[1].nome)&&!ehLula(c[0].nome))c.reverse();
   if(c.length<2){$("status").textContent="Dados do TSE em formato inesperado.";return}
   lastOk=Date.now();txtOk=d.atualizado;
-  $("livetxt").textContent=teste?"TESTE":"AO VIVO";
+  $("livetxt").textContent=teste?"TESTE":d.finalizado?"TOTALIZAÇÃO CONCLUÍDA":"AO VIVO";
+  $("probpanel").style.display=d.finalizado?"none":"";
   const t=(c[0].pct+c[1].pct)||100,p=modelo(c,d.apurado);
   $("progbar").style.width=d.apurado+"%";
   $("ap").textContent=fp(d.apurado);
-  $("status").textContent="Atualizado em "+d.atualizado;
+  $("status").textContent=(d.finalizado?"Totalização concluída · ":"")+"Atualizado em "+d.atualizado;
   $("duel").innerHTML='<i style="width:'+(c[0].pct/t*100)+'%;background:'+COR[0]+'"></i><i style="flex:1;background:'+COR[1]+'"></i>';
-  $("cards").innerHTML=c.map((x,i)=>'<div class="cand" style="border-top-color:'+COR[i]+'"><div class="who">'+foto(x.nome,i)+'<span class="nome">'+x.nome+'</span></div><div class="pct" style="color:'+COR[i]+'">'+fp(x.pct)+'</div><span class="mut">'+fmt(x.votos)+' votos</span></div>').join("");
+  $("cards").innerHTML=c.map((x,i)=>'<div class="cand" style="border-top-color:'+COR[i]+'">'+selo(x)+'<div class="who">'+foto(x.nome,i)+'<span class="nome">'+x.nome+'</span></div><div class="pct" style="color:'+COR[i]+'">'+fp(x.pct)+'</div><span class="mut">'+fmt(x.votos)+' votos</span>'+(x.eleito?'<div class="mut">Resultado oficial do TSE · '+d.atualizado+'</div>':'')+'</div>').join("");
   $("pb").innerHTML=c.map((x,i)=>'<div><div class="big" style="color:'+COR[i]+'">'+pc(p[i])+'</div><div class="mut">'+x.nome+'</div></div>').join("");
   $("pduel").innerHTML='<i style="width:'+(p[0]*100)+'%;background:'+COR[0]+'"></i><i style="flex:1;background:'+COR[1]+'"></i>';
   if(d.atualizado!==ultimo||teste){hist.push(p);ultimo=d.atualizado}
@@ -151,6 +159,7 @@ async function carregar(){
     let d;
     if(teste)d=simular();
     else{const r=await fetch("/api/tse");if(!r.ok)throw 0;d=await r.json()}
+    if(d.aguardando){$("status").textContent="Aguardando o TSE publicar os primeiros dados da apuração.";return}
     desenhar(d);
   }catch(e){
     if(lastOk){
