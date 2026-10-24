@@ -108,7 +108,7 @@ function simular(){
   const a=sim.fin+sim.b*(1-sim.f/100)+(sim.f>=100?0:(Math.random()-.5)*.2),v=1.2e8*sim.f/100;
   const r={apurado:sim.f,atualizado:new Date().toLocaleTimeString("pt-BR"),
     finalizado:sim.f>=100,
-    candidatos:[{nome:"Candidato A (simulado)",pct:a,votos:v*a/100,eleito:sim.f>=100&&a>50},{nome:"Candidato B (simulado)",pct:100-a,votos:v*(100-a)/100,eleito:sim.f>=100&&a<=50}]};
+    candidatos:[{nome:"Candidato A (simulado)",partido:"PA",numero:"11",pct:a,votos:v*a/100,eleito:sim.f>=100&&a>50},{nome:"Candidato B (simulado)",partido:"PB",numero:"22",pct:100-a,votos:v*(100-a)/100,eleito:sim.f>=100&&a<=50}]};
   if(sim.f>=100)sim.fim=r;
   return r;
 }
@@ -150,7 +150,7 @@ function desenhar(d){
   $("ap").textContent=fp(d.apurado);
   $("status").textContent=(d.finalizado?"Totalização concluída · ":"")+"Atualizado em "+d.atualizado;
   $("duel").innerHTML='<i style="width:'+(c[0].pct/t*100)+'%;background:'+COR[0]+'"></i><i style="flex:1;background:'+COR[1]+'"></i>';
-  $("cards").innerHTML=c.map((x,i)=>'<div class="cand" style="border-top-color:'+COR[i]+'">'+selo(x)+'<div class="who">'+foto(x.nome,i)+'<span class="nome">'+x.nome+'</span></div><div class="pct" style="color:'+COR[i]+'">'+fp(x.pct)+'</div><span class="mut">'+fmt(x.votos)+' votos</span>'+(x.eleito?'<div class="mut">Resultado oficial do TSE · '+d.atualizado+'</div>':'')+'</div>').join("");
+  $("cards").innerHTML=c.map((x,i)=>'<div class="cand" style="border-top-color:'+COR[i]+'">'+selo(x)+'<div class="who">'+foto(x.nome,i)+'<div><span class="nome">'+x.nome+'</span>'+(x.partido?'<div class="mut">'+x.partido+(x.numero?' · '+x.numero:'')+'</div>':'')+'</div></div><div class="pct" style="color:'+COR[i]+'">'+fp(x.pct)+'</div><span class="mut">'+fmt(x.votos)+' votos</span>'+(x.eleito?'<div class="mut">Resultado oficial do TSE · '+d.atualizado+'</div>':'')+'</div>').join("");
   $("pb").innerHTML=c.map((x,i)=>'<div><div class="big" style="color:'+COR[i]+'">'+pc(p[i])+'</div><div class="mut">'+x.nome+'</div></div>').join("");
   $("pduel").innerHTML='<i style="width:'+(p[0]*100)+'%;background:'+COR[0]+'"></i><i style="flex:1;background:'+COR[1]+'"></i>';
   if(d.atualizado!==ultimo||(teste&&!d.finalizado)){hist.push(p);ultimo=d.atualizado}
